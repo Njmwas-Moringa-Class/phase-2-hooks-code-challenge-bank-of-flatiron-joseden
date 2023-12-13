@@ -1,8 +1,9 @@
+
 // AccountContainer.js
 import React, { useState, useEffect } from "react";
-import TransactionsList from "./TransactionsList";
 import Search from "./Search";
 import AddTransactionForm from "./AddTransactionForm";
+import TransactionsList from "./TransactionsList";
 
 function AccountContainer() {
   const [transactions, setTransactions] = useState([]);
@@ -26,15 +27,55 @@ function AccountContainer() {
   };
 
   const handleAddTransaction = (newTransaction) => {
-    setTransactions([...transactions, newTransaction]);
-    handleSearch('');
+    fetch("http://localhost:8001/transactions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newTransaction),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setTransactions([...transactions, data]);
+        handleSearch('');
+      })
+      .catch((error) => console.error("Error adding transaction:", error));
+  };
+
+  const handleDeleteTransaction = (id) => {
+    fetch(`http://localhost:8001/transactions/${id}`, {
+      method: "DELETE",
+    })
+      .then(() => {
+        const updatedTransactions = transactions.filter(
+          (transaction) => transaction.id !== id
+        );
+        setTransactions(updatedTransactions);
+        setFilteredTransactions(updatedTransactions);
+      })
+      .catch((error) =>
+        console.error(`Error deleting transaction with ID ${id}:`, error)
+      );
+  };
+
+  const handleSort = (field) => {
+    // Sort transactions by the selected field
+    const sorted = [...filteredTransactions].sort((a, b) => {
+      return a[field].localeCompare(b[field]);
+    });
+
+    setFilteredTransactions(sorted);
   };
 
   return (
     <div>
       <Search handleSearch={handleSearch} />
       <AddTransactionForm handleAddTransaction={handleAddTransaction} />
-      <TransactionsList transactions={filteredTransactions} />
+      <TransactionsList
+        transactions={filteredTransactions}
+        onDeleteTransaction={handleDeleteTransaction}
+        onSort={handleSort}
+      />
     </div>
   );
 }
