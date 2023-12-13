@@ -1,3 +1,4 @@
+// Transaction.js
 import React from "react";
 
 function Transaction({ transaction }) {

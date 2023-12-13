@@ -1,17 +1,8 @@
-import React, { useState, useEffect } from "react";
+// TransactionsList.js
+import React from "react";
 import Transaction from "./Transaction";
 
-function TransactionsList() {
-  const [transactions, setTransactions] = useState([]);
-
-  useEffect(() => {
-    // Fetch transactions from the backend API
-    fetch("http://localhost:8001/transactions")
-      .then((response) => response.json())
-      .then((data) => setTransactions(data))
-      .catch((error) => console.error("Error fetching transactions:", error));
-  }, []);
-
+function TransactionsList({ transactions }) {
   return (
     <table className="ui celled striped padded table">
       <tbody>

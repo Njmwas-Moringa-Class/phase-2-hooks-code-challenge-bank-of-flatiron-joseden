@@ -1,4 +1,5 @@
 // Search.js
+// Search.js
 import React from "react";
 
 function Search({ handleSearch }) {
